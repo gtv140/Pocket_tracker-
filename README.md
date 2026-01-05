@@ -383,24 +383,44 @@ function calculate(){
     // Chart
     const ctx=document.getElementById('chart').getContext('2d');
     if(window.barChart) window.barChart.destroy();
-    window.barChart=new Chart(ctx,{type:'bar',data:{labels:['Salary','Total Expense','Current Saving'],datasets:[{label:'PKR',data:[salary,totalExpense,currentSaving],backgroundColor:['#00acc1','#f39c12','#4caf50']}],options:{responsive:true,plugins:{legend:{display:false},title:{display:true,text:'PocketTracker Overview'}}}});
+    window.barChart=new Chart(ctx,{
+        type:'bar',
+        data:{
+            labels:['Salary','Total Expense','Current Saving']
+datasets:[{
+    label:'PKR',
+    data:[salary,totalExpense,currentSaving],
+    backgroundColor:['#4caf50','#f44336','#2196f3']
+}]
+,
+options:{
+    responsive:true,
+    plugins:{
+        legend:{display:true,position:'top'},
+        title:{display:true,text:'PocketTracker Overview'}
+    },
+    scales:{
+        y:{beginAtZero:true}
+    }
+}
+});
 }
 
 // Export CSV
 function exportCSV(){
-    let csv='Day,Food,Fuel,Snacks,Bills,Entertainment,Daily Total,Total incl. Loan,Date\n';
-    dailyData.forEach((d,i)=>{
-        csv+=`${i+1},${d.food},${d.fuel},${d.snacks},${d.bills},${d.entertainment},${d.total},${d.total + Math.round(loanAmount/dailyData.length||0)},${d.date}\n`;
+    let csv="Day,Food,Fuel,Snacks,Bills,Entertainment,Daily Total,Total incl. Loan,Date\n";
+    dailyData.forEach((day,index)=>{
+        const totalWithLoan=day.total + Math.round(loanAmount/dailyData.length||0);
+        csv+=`${index+1},${day.food},${day.fuel},${day.snacks},${day.bills},${day.entertainment},${day.total},${totalWithLoan},${day.date}\n`;
     });
     const blob=new Blob([csv],{type:'text/csv'});
     const link=document.createElement('a');
     link.href=URL.createObjectURL(blob);
-    link.download='PocketTracker.csv';
+    link.download='PocketTracker_Expenses.csv';
     link.click();
 }
-
-// ===== End of Script =====
 </script>
 
 </body>
 </html>
+            
