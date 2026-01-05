@@ -1,241 +1,218 @@
-<pocket tracker>
+<pocket>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Just Pocket Tracker</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Pocket Traker</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ===== Base ===== */
-body{font-family:'Arial',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#333;}
-h2{text-align:center;margin:10px;font-weight:700;}
-input,button{padding:8px;margin:5px;border-radius:8px;border:1px solid #ccc;}
-button{cursor:pointer;font-weight:700;}
-#dashboard,#licenseScreen{display:none;}
-
-/* ===== Header ===== */
-header{
-    background:linear-gradient(90deg,#4caf50,#2196f3);
-    padding:20px;
-    text-align:center;
+body{
+    font-family:'Roboto',sans-serif;
+    margin:0;
+    padding:0;
+    background: linear-gradient(135deg,#00c6ff,#0072ff);
     color:#fff;
+}
+header{
+    text-align:center;
+    padding:20px;
     font-size:32px;
     font-weight:bold;
-    letter-spacing:1px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
-
-/* ===== Info Boxes ===== */
-.infoBox{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    margin:20px 0;
-}
-.infoBox div{
-    background:linear-gradient(135deg,#ff9800,#ff5722);
-    color:#fff;
-    margin:10px;
-    padding:20px;
-    border-radius:15px;
+#loginScreen,#dashboard{max-width:800px;margin:auto;padding:20px;}
+input,button{padding:8px 12px;margin:5px;border-radius:8px;border:none;}
+button{cursor:pointer;font-weight:bold;background:#ff9800;color:#fff;}
+button:hover{opacity:0.85;}
+input{width:180px;outline:none;}
+.boxes{display:flex;flex-wrap:wrap;justify-content:center;margin:15px 0;}
+.box{
+    flex:1;
     min-width:150px;
+    margin:10px;
+    padding:15px;
     text-align:center;
-    box-shadow:0 6px 15px rgba(0,0,0,0.2);
+    border-radius:15px;
+    background:rgba(255,255,255,0.1);
+    box-shadow:0 6px 15px rgba(0,0,0,0.3);
     font-weight:bold;
-    transition:0.3s;
 }
-.infoBox div:hover{transform:scale(1.05);}
-
-/* ===== Buttons ===== */
-button.addBtn{background:#4caf50;color:#fff;border:none;}
-button.clearBtn{background:#f44336;color:#fff;border:none;}
-
-/* ===== Table ===== */
-table{
-    width:90%;
-    margin:10px auto;
-    border-collapse:collapse;
-    border-radius:8px;
-    overflow:hidden;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-th,td{border:1px solid #ccc;padding:8px;text-align:center;}
-th{background:#2196f3;color:#fff;}
-tr:nth-child(even){background:#f9f9f9;}
+.expenseBtn{flex:1;min-width:120px;margin:5px;padding:10px;background:#4caf50;color:#fff;border-radius:10px;}
+.expenseBtn:hover{opacity:0.85;}
+table{width:100%;border-collapse:collapse;margin-top:15px;background:rgba(255,255,255,0.95);color:#333;border-radius:10px;overflow:hidden;}
+th,td{border:1px solid #ddd;padding:8px;text-align:center;}
+th{background:#0288d1;color:#fff;}
+tr:nth-child(even){background:rgba(0,172,193,0.1);}
+tr:hover{background:rgba(0,172,193,0.2);}
+#datetime{text-align:center;margin:10px;font-weight:bold;color:#ffeb3b;}
 </style>
 </head>
 <body>
 
-<header>💼 Just Pocket Tracker 💼</header>
-<div id="datetime" style="text-align:center;margin-bottom:10px;"></div>
+<header>📊 Pocket Traker 📊</header>
+<div id="datetime"></div>
 
-<!-- Login/Register -->
+<!-- Login -->
 <div id="loginScreen">
-    <h2>Login / Register</h2>
-    Username: <input type="text" id="loginUser"><br>
-    Password: <input type="password" id="loginPass"><br>
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Register</button>
-    <p id="loginMsg" style="color:#ff9800;"></p>
-</div>
-
-<!-- License -->
-<div id="licenseScreen">
-    <h2>Enter License Key</h2>
-    <input type="text" id="licenseInput" placeholder="XXXX-XXXX"><br>
-    <button onclick="checkLicense()">Unlock Dashboard</button>
-    <p id="licenseMsg" style="color:#ff9800;"></p>
+<h2>Login / Register</h2>
+<input type="text" id="username" placeholder="Username"><br>
+<input type="password" id="password" placeholder="Password"><br>
+<button onclick="login()">Login</button>
+<button onclick="register()">Register</button>
+<p id="loginMsg" style="color:#ffeb3b;"></p>
 </div>
 
 <!-- Dashboard -->
-<div id="dashboard">
-    <h2 id="welcomeUser"></h2>
-    <div style="text-align:center;margin-bottom:10px;">
-        Salary: <input type="number" id="salaryInput" value="0" onchange="updateSalary()">
-        Goal Saving: <input type="number" id="goalInput" value="10000" onchange="updateGoal()">
-        Loan: <input type="number" id="loanInput" value="0" onchange="updateLoan()"><br>
-        <button onclick="logout()">Logout</button>
-    </div>
+<div id="dashboard" style="display:none;">
+<div style="text-align:right;margin-bottom:10px;">
+<span id="welcomeUser"></span>
+<button onclick="logout()">Logout</button>
+</div>
 
-    <h3>💰 Dashboard Summary</h3>
-    <div class="infoBox">
-        <div>Total Expense<br><span id="totalExpense">0</span></div>
-        <div>Remaining Balance<br><span id="remaining">0</span></div>
-        <div>Current Saving<br><span id="currentSaving">0</span></div>
-        <div>Goal Achieved<br><span id="goalStatus">0%</span></div>
-    </div>
+<div class="boxes">
+<div class="box">Username<br><span id="userBox">-</span></div>
+<div class="box">Salary<br><span id="salaryBox">0</span></div>
+<div class="box">Current Balance<br><span id="balanceBox">0</span></div>
+<div class="box">Saving<br><span id="savingBox">0</span></div>
+<div class="box">Loan<br><span id="loanBox">0</span></div>
+</div>
 
-    <h3>Daily Expenses</h3>
-    <div style="text-align:center;">
-        <button class="addBtn" onclick="addDaily('food')">Food 🍔</button>
-        <button class="addBtn" onclick="addDaily('fuel')">Fuel ⛽</button>
-        <button class="addBtn" onclick="addDaily('snacks')">Snacks 🍿</button>
-        <button class="addBtn" onclick="addDaily('bills')">Bills 💡</button>
-        <button class="addBtn" onclick="addDaily('fun')">Fun 🎮</button>
-        <button class="clearBtn" onclick="clearAll()">Clear All 🗑️</button>
-    </div>
+<h3>Add Daily Expense</h3>
+<div class="boxes">
+<button class="expenseBtn" onclick="addExpense('Food')">🍔 Food</button>
+<button class="expenseBtn" onclick="addExpense('Fuel')">⛽ Fuel</button>
+<button class="expenseBtn" onclick="addExpense('Snacks')">🍿 Snacks</button>
+<button class="expenseBtn" onclick="addExpense('Bills')">💡 Bills</button>
+<button class="expenseBtn" onclick="addExpense('Fun')">🎮 Fun</button>
+<button class="expenseBtn" onclick="clearData()">🗑️ Clear All</button>
+</div>
 
-    <table id="dailyTable">
-        <tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Fun</th><th>Total</th><th>Date</th></tr>
-    </table>
+<h3>Daily Expenses Table</h3>
+<table id="expenseTable">
+<tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Fun</th><th>Total</th><th>Date</th></tr>
+</table>
 
-    <canvas id="chart" width="400" height="200" style="display:block;margin:20px auto;"></canvas>
 </div>
 
 <script>
-// ===== Timer =====
+// Timer
 function updateDateTime(){
     const now=new Date();
-    document.getElementById('datetime').innerText=now.toLocaleDateString()+' | '+now.toLocaleTimeString();
+    document.getElementById('datetime').innerText=now.toLocaleDateString() + ' | ' + now.toLocaleTimeString();
 }
 setInterval(updateDateTime,1000);
 updateDateTime();
 
-// ===== Users =====
-let users=JSON.parse(localStorage.getItem('users')||"{}");
+// Users
+let users=JSON.parse(localStorage.getItem('users')||'{}');
 let currentUser=null;
-let dailyData=[],salary=0,goal=10000,loan=0;
 
-// ===== Login/Register =====
+// Login/Register
 function login(){
-    const u=document.getElementById('loginUser').value.trim();
-    const p=document.getElementById('loginPass').value;
-    if(users[u] && users[u].pass===p){currentUser=u;localStorage.setItem('currentUser',u);loadUserData();}
-    else{document.getElementById('loginMsg').innerText='Invalid login!';}
+    const u=document.getElementById('username').value.trim();
+    const p=document.getElementById('password').value;
+    if(users[u] && users[u].pass===p){
+        currentUser=u;
+        localStorage.setItem('currentUser',currentUser);
+        loadDashboard();
+    } else {document.getElementById('loginMsg').innerText='Invalid login!';}
 }
 function register(){
-    const u=document.getElementById('loginUser').value.trim();
-    const p=document.getElementById('loginPass').value;
-    if(!u || !p){document.getElementById('loginMsg').innerText='Enter username & password!'; return;}
-    if(users[u]){document.getElementById('loginMsg').innerText='User exists!'; return;}
-    let key=Math.random().toString(36).substring(2,10).toUpperCase();
-    users[u]={pass:p,license:false,licenseKey:key,dailyData:[],salary:0,goal:10000,loan:0};
-    localStorage.setItem('users',JSON.stringify(users));
-    document.getElementById('loginMsg').innerText=`Registered! License Key: ${key}`;
+    const u=document.getElementById('username').value.trim();
+    const p=document.getElementById('password').value;
+    if(u && p){
+        if(users[u]){document.getElementById('loginMsg').innerText='User exists!'; return;}
+        users[u]={pass:p,salary:0,loan:0,daily:[]};
+        localStorage.setItem('users',JSON.stringify(users));
+        document.getElementById('loginMsg').innerText='Registered! Login now.';
+    }
 }
 
-// ===== Load User =====
+// Load Dashboard
+function loadDashboard(){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    currentUser=currentUser||localStorage.getItem('currentUser');
+    const userData=users[currentUser];
+    document.getElementById('welcomeUser').innerText=`Welcome, ${currentUser}!`;
+    document.getElementById('userBox').innerText=currentUser;
+    document.getElementById('salaryBox').innerText=userData.salary;
+    updateBalance();
+    renderTable();
+}
+
+// Update Balance and Saving
+function updateBalance(){
+    const userData=users[currentUser];
+    let totalExpense=0;
+    userData.daily.forEach(d=>{totalExpense+=d.total;});
+    const balance=userData.salary-totalExpense;
+    const saving=Math.max(balance,0);
+    document.getElementById('balanceBox').innerText=balance;
+    document.getElementById('savingBox').innerText=saving;
+    document.getElementById('loanBox').innerText=userData.loan;
+}
+
+// Add Expense
+function addExpense(type){
+    const amt=parseInt(prompt(`Enter ${type} amount:`,"0"))||0;
+    const date=new Date().toLocaleDateString();
+    let userData=users[currentUser];
+    if(!userData.daily.length || userData.daily[userData.daily.length-1].date!==date){
+        userData.daily.push({Food:0,Fuel:0,Snacks:0,Bills:0,Fun:0,total:0,date:date});
+    }
+    const today=userData.daily[userData.daily.length-1];
+    today[type]+=amt;
+    today.total=today.Food+today.Fuel+today.Snacks+today.Bills+today.Fun;
+    users[currentUser]=userData;
+    localStorage.setItem('users',JSON.stringify(users));
+    updateBalance();
+    renderTable();
+}
+
+// Render Table
+function renderTable(){
+    const userData=users[currentUser];
+    const table=document.getElementById('expenseTable');
+    table.innerHTML="<tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Fun</th><th>Total</th><th>Date</th></tr>";
+    userData.daily.forEach((d,i)=>{
+        const row=table.insertRow();
+        row.insertCell(0).innerText=i+1;
+        row.insertCell(1).innerText=d.Food;
+        row.insertCell(2).innerText=d.Fuel;
+        row.insertCell(3).innerText=d.Snacks;
+        row.insertCell(4).innerText=d.Bills;
+        row.insertCell(5).innerText=d.Fun;
+        row.insertCell(6).innerText=d.total;
+        row.insertCell(7).innerText=d.date;
+    });
+}
+
+// Clear All
+function clearData(){
+    if(confirm('Delete all daily data?')){
+        users[currentUser].daily=[];
+        localStorage.setItem('users',JSON.stringify(users));
+        updateBalance();
+        renderTable();
+    }
+}
+
+// Logout
+function logout(){
+    localStorage.removeItem('currentUser');
+    currentUser=null;
+    document.getElementById('dashboard').style.display='none';
+    document.getElementById('loginScreen').style.display='block';
+}
+
+// Auto load
 window.onload=function(){
     const savedUser=localStorage.getItem('currentUser');
-    if(savedUser && users[savedUser]){currentUser=savedUser;loadUserData();}
-}
-function loadUserData(){
-    document.getElementById('loginScreen').style.display='none';
-    if(!users[currentUser].license){document.getElementById('licenseScreen').style.display='block';}
-    else{showDashboard();}
-}
-
-// ===== License =====
-function checkLicense(){
-    const key=document.getElementById('licenseInput').value.trim();
-    if(key===users[currentUser].licenseKey){users[currentUser].license=true;localStorage.setItem('users',JSON.stringify(users));showDashboard();}
-    else{document.getElementById('licenseMsg').innerText='Invalid License!';}
-}
-
-// ===== Dashboard =====
-function showDashboard(){
-    document.getElementById('licenseScreen').style.display='none';
-    document.getElementById('dashboard').style.display='block';
-    document.getElementById('welcomeUser').innerText=`Welcome, ${currentUser}!`;
-    const u=users[currentUser];
-    dailyData=u.dailyData||[];
-    salary=u.salary||0;
-    goal=u.goal||10000;
-    loan=u.loan||0;
-    document.getElementById('salaryInput').value=salary;
-    document.getElementById('goalInput').value=goal;
-    document.getElementById('loanInput').value=loan;
-    calculate();
-}
-
-// ===== Logout =====
-function logout(){localStorage.removeItem('currentUser');currentUser=null;document.getElementById('dashboard').style.display='none';document.getElementById('loginScreen').style.display='block';}
-
-// ===== Expenses =====
-function addDaily(type){
-    const val=parseInt(prompt(`Enter ${type} amount:`,"0"))||0;
-    const today={food:0,fuel:0,snacks:0,bills:0,fun:0,total:0,date:new Date().toLocaleDateString()};
-    if(dailyData.length>0 && dailyData[dailyData.length-1].date===today.date){
-        dailyData[dailyData.length-1][type]+=val;
-        let d=dailyData[dailyData.length-1];
-        d.total=d.food+d.fuel+d.snacks+d.bills+d.fun;
-    } else {today[type]=val;today.total=today.food+today.fuel+today.snacks+today.bills+today.fun;dailyData.push(today);}
-    saveUser(); calculate();
-}
-function updateSalary(){salary=parseInt(document.getElementById('salaryInput').value)||0;saveUser(); calculate();}
-function updateGoal(){goal=parseInt(document.getElementById('goalInput').value)||10000;saveUser(); calculate();}
-function updateLoan(){loan=parseInt(document.getElementById('loanInput').value)||0;saveUser(); calculate();}
-function clearAll(){if(confirm("Delete all data?")){dailyData=[];saveUser();calculate();}}
-function saveUser(){users[currentUser].dailyData=dailyData;users[currentUser].salary=salary;users[currentUser].goal=goal;users[currentUser].loan=loan;localStorage.setItem('users',JSON.stringify(users));}
-
-// ===== Calculate & Table =====
-function calculate(){
-    let totalExpense=loan;
-    const table=document.getElementById('dailyTable');
-    table.innerHTML="<tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Fun</th><th>Total</th><th>Date</th></tr>";
-    dailyData.forEach((day,index)=>{
-        const row=table.insertRow();
-        row.insertCell(0).innerText=index+1;
-        row.insertCell(1).innerText=day.food;
-        row.insertCell(2).innerText=day.fuel;
-        row.insertCell(3).innerText=day.snacks;
-        row.insertCell(4).innerText=day.bills;
-        row.insertCell(5).innerText=day.fun;
-        row.insertCell(6).innerText=day.total;
-        row.insertCell(7).innerText=day.date;
-        totalExpense+=day.total;
-    });
-    const remaining=salary-totalExpense;
-    const saving=Math.max(0,remaining);
-    document.getElementById('totalExpense').innerText=totalExpense;
-    document.getElementById('remaining').innerText=remaining;
-    document.getElementById('currentSaving').innerText=saving;
-    document.getElementById('goalStatus').innerText=Math.min(Math.round((saving/goal)*100),100)+'%';
-
-    // Chart
-    const ctx=document.getElementById('chart').getContext('2d');
-    if(window.barChart) window.barChart.destroy();
-    window.barChart=new Chart(ctx,{type:'bar',data:{labels:['Salary','Expense','Saving'],datasets:[{label:'PKR',data:[salary,totalExpense,saving],backgroundColor:['#4caf50','#f44336','#2196f3']}]},options:{responsive:true,plugins:{legend:{display:true},title:{display:true,text:'PocketTracker Overview'}},scales:{y:{beginAtZero:true}}}});
-}
+    if(savedUser && users[savedUser]){
+        currentUser=savedUser;
+        loadDashboard();
+    }
+};
 </script>
 
 </body>
