@@ -1,4 +1,4 @@
-<Monthly>
+<monthly>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -12,19 +12,22 @@ body {
     margin: 0;
     padding: 20px;
 }
-
 h1, h2 {
     text-align: center;
     color: #1a1a1a;
 }
-
 p.message {
     text-align: center;
     font-size: 18px;
     color: #1a1a1a;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
-
+#datetime {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: #555;
+}
 input {
     padding: 8px;
     width: 130px;
@@ -38,7 +41,6 @@ input:focus {
     border-color: #357ABD;
     box-shadow: 0 0 5px #357ABD;
 }
-
 button {
     padding: 12px 24px;
     margin: 10px 0;
@@ -54,7 +56,6 @@ button:hover {
     background: #357ABD;
     transform: scale(1.05);
 }
-
 table {
     border-collapse: collapse;
     width: 100%;
@@ -64,30 +65,25 @@ table {
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-
 th, td {
     border: 1px solid #e0e0e0;
     padding: 12px;
     text-align: center;
     color: #333;
 }
-
 th {
     background: #f5f7fa;
     font-weight: bold;
 }
-
 td:hover {
     background: #f0f4f8;
 }
-
 canvas {
     margin-top: 20px;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-
 label {
     display: inline-block;
     margin: 5px;
@@ -98,7 +94,8 @@ label {
 <body>
 
 <h1>🌟 PocketTracker - Premium Salary Dashboard 🌟</h1>
-<p class="message">Hey Sweetie! 😇 Track your salary, daily & monthly expenses, and savings easily with this clean, modern dashboard!</p>
+<p class="message">Hey Sweetie! 😇 Track your salary, daily & monthly expenses, and savings with automatic updates!</p>
+<div id="datetime"></div>
 
 <div style="text-align:center;">
   <label>Salary: <input type="number" id="salary" value="49800"></label>
@@ -106,7 +103,7 @@ label {
   <label>Loan: <input type="number" id="loan" value="10000"></label>
   <label>Daily Kharcha: <input type="number" id="daily" value="500"></label>
   <br>
-  <button onclick="calculate()">Calculate</button>
+  <button onclick="calculate()">Calculate & Save</button>
 </div>
 
 <h2>Monthly Overview</h2>
@@ -123,7 +120,7 @@ label {
   </tr>
 </table>
 
-<h2>Daily Expenses (26 workdays)</h2>
+<h2>Daily Expenses</h2>
 <table id="dailyTable">
   <tr><th>Day</th><th>Kharcha (PKR)</th></tr>
 </table>
@@ -145,16 +142,41 @@ label {
 <canvas id="chart" width="400" height="200"></canvas>
 
 <script>
+// Timer & Date
+function updateDateTime(){
+    const now = new Date();
+    const options = {weekday:'long', year:'numeric', month:'long', day:'numeric'};
+    document.getElementById('datetime').innerText = now.toLocaleDateString('en-US', options) + ' | ' + now.toLocaleTimeString();
+}
+setInterval(updateDateTime,1000);
+updateDateTime();
+
+// Load from localStorage
+window.onload = function(){
+    if(localStorage.getItem('pocketTrackerData')){
+        let data = JSON.parse(localStorage.getItem('pocketTrackerData'));
+        document.getElementById('salary').value = data.salary;
+        document.getElementById('house').value = data.house;
+        document.getElementById('loan').value = data.loan;
+        document.getElementById('daily').value = data.daily;
+        calculate();
+    }
+}
+
+// Main Calculation
 function calculate(){
   let salary = parseInt(document.getElementById('salary').value);
   let house = parseInt(document.getElementById('house').value);
   let loan = parseInt(document.getElementById('loan').value);
   let daily = parseInt(document.getElementById('daily').value);
-  let workdays = 26;
 
-  // Total
+  const now = new Date();
+  const totalDays = new Date(now.getFullYear(), now.getMonth()+1,0).getDate(); // month total days
+  const workdays = totalDays; // include all month days
+
   let totalExpense = house + loan + daily*workdays;
   let remaining = salary - totalExpense;
+
   document.getElementById('totalSalary').innerText = salary;
   document.getElementById('totalExpense').innerText = totalExpense;
   document.getElementById('remaining').innerText = remaining;
@@ -164,15 +186,16 @@ function calculate(){
   dailyTable.innerHTML = "<tr><th>Day</th><th>Kharcha (PKR)</th></tr>";
   for(let i=1;i<=workdays;i++){
     let row = dailyTable.insertRow();
-    row.insertCell(0).innerText = "Day "+i;
+    row.insertCell(0).innerText = i;
     row.insertCell(1).innerText = daily;
   }
 
-  // Weekly summary
-  let dailyPerWeek = daily*6.5;
+  // Weekly summary (7 days per week)
   for(let i=1;i<=4;i++){
-    document.getElementById('w'+i+'Expense').innerText = (house/4 + loan/4 + dailyPerWeek).toFixed(0);
-    document.getElementById('w'+i+'Saving').innerText = (salary/4 - (house/4 + loan/4 + dailyPerWeek)).toFixed(0);
+    let weekExpense = daily*7 + house/4 + loan/4;
+    let weekSaving = salary/4 - weekExpense;
+    document.getElementById('w'+i+'Expense').innerText = weekExpense.toFixed(0);
+    document.getElementById('w'+i+'Saving').innerText = weekSaving.toFixed(0);
   }
 
   // Chart
@@ -194,6 +217,9 @@ function calculate(){
       scales:{y:{beginAtZero:true}, x:{}}
     }
   });
+
+  // Save to localStorage
+  localStorage.setItem('pocketTrackerData', JSON.stringify({salary,house,loan,daily}));
 }
 </script>
 
