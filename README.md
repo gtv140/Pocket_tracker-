@@ -1,31 +1,27 @@
-<MONTHLY>
+<Monthly>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PocketTracker - Neon Salary Dashboard</title>
+<title>PocketTracker - Premium Salary Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-
 body {
-    font-family: 'Orbitron', sans-serif;
-    background: linear-gradient(135deg, #000, #050505, #0a0a0a);
-    color: #0ff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+    color: #333;
     margin: 0;
     padding: 20px;
 }
 
 h1, h2 {
     text-align: center;
-    color: #0ff;
-    text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #8bf;
+    color: #1a1a1a;
 }
 
 p.message {
     text-align: center;
     font-size: 18px;
-    color: #0ff;
-    text-shadow: 0 0 5px #0ff, 0 0 10px #8bf;
+    color: #1a1a1a;
     margin-bottom: 20px;
 }
 
@@ -33,32 +29,29 @@ input {
     padding: 8px;
     width: 130px;
     margin: 5px;
-    background: #111;
-    border: 2px solid #0ff;
+    border: 2px solid #4a90e2;
     border-radius: 8px;
-    color: #0ff;
     outline: none;
     transition: 0.3s;
 }
 input:focus {
-    box-shadow: 0 0 10px #0ff, 0 0 20px #8bf;
-    border-color: #8bf;
+    border-color: #357ABD;
+    box-shadow: 0 0 5px #357ABD;
 }
 
 button {
     padding: 12px 24px;
     margin: 10px 0;
-    background: linear-gradient(45deg,#0ff,#08f);
+    background: #4a90e2;
     border: none;
-    color: #000;
+    color: #fff;
     font-weight: bold;
     cursor: pointer;
     border-radius: 8px;
-    box-shadow: 0 0 10px #0ff, 0 0 20px #08f;
     transition: 0.3s;
 }
 button:hover {
-    box-shadow: 0 0 25px #0ff, 0 0 50px #08f;
+    background: #357ABD;
     transform: scale(1.05);
 }
 
@@ -66,56 +59,46 @@ table {
     border-collapse: collapse;
     width: 100%;
     margin-top: 20px;
-    background: #000;
-    border: 2px solid #0ff;
-    box-shadow: 0 0 10px #0ff;
+    background: #fff;
     border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 th, td {
-    border: 1px solid #0ff;
+    border: 1px solid #e0e0e0;
     padding: 12px;
     text-align: center;
-    color: #0ff;
-    text-shadow: 0 0 5px #0ff, 0 0 10px #08f;
-    transition: 0.3s;
+    color: #333;
 }
+
 th {
-    background: linear-gradient(90deg, #000, #111);
-    color: #0ff;
+    background: #f5f7fa;
+    font-weight: bold;
 }
+
 td:hover {
-    color: #08f;
-    text-shadow: 0 0 10px #0ff, 0 0 20px #08f;
+    background: #f0f4f8;
 }
 
 canvas {
     margin-top: 20px;
-    background: #000;
-    box-shadow: 0 0 20px #0ff;
+    background: #fff;
     border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 label {
     display: inline-block;
     margin: 5px;
-    color: #0ff;
-    text-shadow: 0 0 5px #0ff;
     font-weight: bold;
-}
-
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
 }
 </style>
 </head>
 <body>
 
-<h1>🌌 PocketTracker - Neon Salary Dashboard 🌌</h1>
-<p class="message">Hey Sweetie! 😇 Ab tu apni salary, daily & monthly kharcha aur saving easy aur neon style me track kar sakta hai! 💸✨</p>
+<h1>🌟 PocketTracker - Premium Salary Dashboard 🌟</h1>
+<p class="message">Hey Sweetie! 😇 Track your salary, daily & monthly expenses, and savings easily with this clean, modern dashboard!</p>
 
 <div style="text-align:center;">
   <label>Salary: <input type="number" id="salary" value="49800"></label>
@@ -185,7 +168,7 @@ function calculate(){
     row.insertCell(1).innerText = daily;
   }
 
-  // Weekly summary (6-7 workdays per week)
+  // Weekly summary
   let dailyPerWeek = daily*6.5;
   for(let i=1;i<=4;i++){
     document.getElementById('w'+i+'Expense').innerText = (house/4 + loan/4 + dailyPerWeek).toFixed(0);
@@ -202,13 +185,13 @@ function calculate(){
       datasets:[{
         label:'PKR',
         data:[salary,totalExpense,remaining],
-        backgroundColor:['#0ff','#08f','#0f0'],
-        borderColor:['#0ff','#08f','#0f0'],
+        backgroundColor:['#4a90e2','#f39c12','#2ecc71'],
+        borderColor:['#357ABD','#d35400','#27ae60'],
         borderWidth:2
       }]
     },
     options:{responsive:true, plugins:{legend:{display:false}},
-      scales:{y:{beginAtZero:true,ticks:{color:'#0ff'}}, x:{ticks:{color:'#0ff'}}}
+      scales:{y:{beginAtZero:true}, x:{}}
     }
   });
 }
