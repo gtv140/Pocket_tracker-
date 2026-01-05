@@ -2,44 +2,93 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PocketTracker - Ultimate Pro</title>
+<title>PocketTracker Ultimate Premium</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body {
+/* ===== Base Styles ===== */
+body{
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin:0;padding:0;
     background: linear-gradient(120deg,#1e3c72,#2a5298);
-    margin:0;
-    padding:20px;
     color:#fff;
 }
-h1,h2{text-align:center;margin-bottom:10px;}
+h1,h2{text-align:center;margin:10px;}
 #datetime{text-align:center;font-weight:bold;margin-bottom:15px;color:#ffeb3b;}
-.dashboard{display:flex;flex-wrap:wrap;justify-content:center;margin-bottom:20px;}
-.card{background:linear-gradient(135deg,#29b6f6,#00acc1);box-shadow:0 4px 12px rgba(0,0,0,0.25);border-radius:12px;margin:10px;padding:15px;text-align:center;width:120px;cursor:pointer;transition:0.3s;color:#fff;font-weight:bold;}
+button{cursor:pointer;transition:0.3s;}
+button:hover{opacity:0.8;}
+input{padding:5px;border-radius:6px;border:2px solid #03a9f4;outline:none;margin:3px;}
+input:focus{border-color:#0288d1;box-shadow:0 0 5px #0288d1;}
+
+/* ===== Dashboard Styles ===== */
+.dashboard{display:flex;flex-wrap:wrap;justify-content:center;margin:20px 0;}
+.card{
+    background:linear-gradient(135deg,#29b6f6,#00acc1);
+    box-shadow:0 4px 12px rgba(0,0,0,0.25);
+    border-radius:12px;
+    margin:10px;
+    padding:15px;
+    text-align:center;
+    width:120px;
+    cursor:pointer;
+    transition:0.3s;
+    font-weight:bold;
+}
 .card:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,0.35);}
 .card span{display:block;font-size:30px;margin-bottom:5px;}
-table{border-collapse: collapse;width:100%;margin-top:20px;background:#fff;color:#333;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+
+.infoBox{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-around;
+    margin:20px;
+    background:rgba(255,255,255,0.1);
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.25);
+}
+.infoBox div{
+    text-align:center;
+    background:linear-gradient(135deg,#00acc1,#29b6f6);
+    color:#fff;
+    padding:15px;
+    margin:5px;
+    border-radius:12px;
+    flex:1;
+    min-width:140px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.25);
+    transition:0.3s;font-weight:bold;
+}
+.infoBox div:hover{transform:scale(1.05);}
+
+/* ===== Table ===== */
+table{
+    border-collapse: collapse;
+    width:100%;
+    margin-top:20px;
+    background:#fff;
+    color:#333;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
 th,td{border:1px solid #e0e0e0;padding:8px;text-align:center;}
 th{background:#0288d1;color:#fff;}
-input.salaryInput,input.loginInput,input.licenseInput,input.goalInput,input.loanInput{width:90px;text-align:center;border-radius:8px;border:2px solid #03a9f4;padding:5px;outline:none;transition:0.3s;margin-top:5px;}
-input.salaryInput:focus,input.loginInput:focus,input.licenseInput:focus,input.goalInput:focus,input.loanInput:focus{border-color:#0288d1;box-shadow:0 0 5px #0288d1;}
-button{padding:5px 10px;margin-top:5px;border-radius:8px;border:none;background:#0288d1;color:#fff;cursor:pointer;transition:0.3s;font-weight:bold;}
-button:hover{background:#01579b;}
-.infoBox{display:flex;flex-wrap:wrap;justify-content:space-around;margin:20px 0;background:rgba(255,255,255,0.1);padding:15px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.25);}
-.infoBox div{text-align:center;background:linear-gradient(135deg,#00acc1,#29b6f6);color:#fff;padding:15px;margin:5px;border-radius:12px;flex:1;min-width:140px;box-shadow:0 4px 12px rgba(0,0,0,0.25);transition:0.3s;font-weight:bold;}
-.infoBox div:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,0.35);}
+
+/* ===== Theme Toggle ===== */
+#themeToggle{position:fixed;top:10px;right:10px;padding:6px 10px;background:#0288d1;color:#fff;border-radius:6px;}
 </style>
 </head>
 <body>
 
-<h1>💼 PocketTracker - Ultimate Pro 💼</h1>
+<h1>💼 PocketTracker Ultimate Premium 💼</h1>
 <div id="datetime"></div>
+<button id="themeToggle" onclick="toggleTheme()">Toggle Theme</button>
 
-<!-- Login Screen -->
+<!-- Login / Register -->
 <div id="loginScreen">
     <h2>Login / Register</h2>
-    Username: <input type="text" id="loginUser" class="loginInput"><br>
-    Password: <input type="password" id="loginPass" class="loginInput"><br>
+    Username: <input type="text" id="loginUser"><br>
+    Password: <input type="password" id="loginPass"><br>
     <button onclick="login()">Login</button>
     <button onclick="register()">Register</button>
     <p id="loginMsg" style="color:#ffeb3b;"></p>
@@ -48,13 +97,13 @@ button:hover{background:#01579b;}
 <!-- License Screen -->
 <div id="licenseScreen">
     <h2>Enter License Key</h2>
-    <input type="text" id="licenseInput" class="licenseInput" placeholder="XXXX-XXXX"><br>
+    <input type="text" id="licenseInput" placeholder="XXXX-XXXX"><br>
     <button onclick="checkLicense()">Unlock Dashboard</button>
     <p id="licenseMsg" style="color:#ffeb3b;"></p>
 </div>
 
 <!-- Dashboard -->
-<div id="dashboard">
+<div id="dashboard" style="display:none;">
     <div style="text-align:right;margin-bottom:10px;">
         <span id="welcomeUser" style="font-weight:bold;font-size:18px;"></span>
         <button onclick="logout()">Logout</button>
@@ -63,9 +112,9 @@ button:hover{background:#01579b;}
     <h2>💰 User Info & Goals</h2>
     <div class="infoBox">
         <div>Username<br><span id="infoUser">-</span></div>
-        <div>Salary<br><input type="number" class="salaryInput" id="salaryInput" value="0" onchange="updateSalary()"></div>
-        <div>Goal Saving<br><input type="number" class="goalInput" id="goalInput" value="10000" onchange="updateGoal()"></div>
-        <div>Loan Amount<br><input type="number" class="loanInput" id="loanInput" value="0" onchange="updateLoan()"></div>
+        <div>Salary<br><input type="number" id="salaryInput" value="0" onchange="updateSalary()"></div>
+        <div>Goal Saving<br><input type="number" id="goalInput" value="10000" onchange="updateGoal()"></div>
+        <div>Loan Amount<br><input type="number" id="loanInput" value="0" onchange="updateLoan()"></div>
     </div>
 
     <h2>Dashboard Summary</h2>
@@ -77,7 +126,7 @@ button:hover{background:#01579b;}
     </div>
 
     <h2>Daily Expenses</h2>
-    <div class="dashboard">
+    <div class="dashboard" id="expenseCards">
         <div class="card" title="Add Food" onclick="addDaily('food')"><span>🍔</span>Food</div>
         <div class="card" title="Add Fuel" onclick="addDaily('fuel')"><span>⛽</span>Fuel</div>
         <div class="card" title="Add Snacks" onclick="addDaily('snacks')"><span>🍿</span>Snacks</div>
@@ -85,14 +134,13 @@ button:hover{background:#01579b;}
         <div class="card" title="Add Entertainment" onclick="addDaily('entertainment')"><span>🎮</span>Fun</div>
         <div class="card" title="Clear All Data" onclick="clearAll()"><span>🗑️</span>Clear</div>
         <div class="card" title="Export CSV" onclick="exportCSV()"><span>📊</span>Export</div>
+        <div class="card" title="Backup JSON" onclick="backupJSON()"><span>💾</span>Backup</div>
+        <div class="card" title="Restore JSON" onclick="restoreJSON()"><span>📂</span>Restore</div>
     </div>
 
     <h2>Daily Expenses Table</h2>
     <table id="dailyTable">
-    <tr>
-    <th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Entertainment</th>
-    <th>Daily Total</th><th>Total incl. Loan</th><th>Date</th>
-    </tr>
+        <tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Entertainment</th><th>Daily Total</th><th>Total incl. Loan</th><th>Date</th></tr>
     </table>
 
     <h2>Visual Overview</h2>
@@ -100,7 +148,7 @@ button:hover{background:#01579b;}
 </div>
 
 <script>
-// Timer
+// ===== Timer =====
 function updateDateTime(){
     const now=new Date();
     const options={weekday:'long',year:'numeric',month:'long',day:'numeric'};
@@ -109,9 +157,23 @@ function updateDateTime(){
 setInterval(updateDateTime,1000);
 updateDateTime();
 
-// Multi-User Data
+// ===== Theme Toggle =====
+let darkTheme=true;
+function toggleTheme(){
+    if(darkTheme){
+        document.body.style.background="#fff";
+        document.body.style.color="#333";
+        darkTheme=false;
+    }else{
+        document.body.style.background="linear-gradient(120deg,#1e3c72,#2a5298)";
+        document.body.style.color="#fff";
+        darkTheme=true;
+    }
+}
+
+// ===== Multi-User & License =====
 let currentUser=null;
-let users = JSON.parse(localStorage.getItem('users')||"{}");
+let users=JSON.parse(localStorage.getItem('users')||"{}");
 let dailyData=[],loanAmount=0,salary=0,goal=10000;
 
 // Generate License Key
@@ -126,13 +188,11 @@ function generateLicenseKey(){
 
 // Persistent login
 window.onload=function(){
-    const savedUser = localStorage.getItem('currentUser');
+    const savedUser=localStorage.getItem('currentUser');
     if(savedUser && users[savedUser]){
         currentUser=savedUser;
         loadUserData();
-    } else {
-        document.getElementById('loginScreen').style.display='block';
-    }
+    } else {document.getElementById('loginScreen').style.display='block';}
 }
 
 // Login/Register
@@ -165,7 +225,7 @@ function loadUserData(){
     } else {showDashboard();}
 }
 
-// License
+// License Check
 function checkLicense(){
     const key=document.getElementById('licenseInput').value.trim();
     if(key===users[currentUser].licenseKey){
@@ -200,7 +260,7 @@ function logout(){
     document.getElementById('loginScreen').style.display='block';
 }
 
-// Add daily expense
+// Add Daily Expense
 function addDaily(type){
     const value=parseInt(prompt(`Enter ${type} amount in PKR:`,"0"))||0;
     const today={food:0,fuel:0,snacks:0,bills:0,entertainment:0,total:0,date:new Date().toLocaleDateString()};
@@ -213,7 +273,7 @@ function addDaily(type){
     calculate();
 }
 
-// Update salary, goal, loan
+// Update Salary, Goal, Loan
 function updateSalary(){salary=parseInt(document.getElementById('salaryInput').value)||0;saveUserData();calculate();}
 function updateGoal(){goal=parseInt(document.getElementById('goalInput').value)||10000;saveUserData();calculate();}
 function updateLoan(){loanAmount=parseInt(document.getElementById('loanInput').value)||0;saveUserData();calculate();}
@@ -227,8 +287,33 @@ function saveUserData(){
     localStorage.setItem('users',JSON.stringify(users));
 }
 
-// Clear all
+// Clear All
 function clearAll(){if(confirm("Delete all data?")){dailyData=[];saveUserData();calculate();}}
+
+// Backup & Restore
+function backupJSON(){
+    const blob=new Blob([JSON.stringify(users)],{type:'application/json'});
+    const link=document.createElement('a');
+    link.href=URL.createObjectURL(blob);
+    link.download='PocketTrackerBackup.json';
+    link.click();
+}
+function restoreJSON(){
+    const fileInput=document.createElement('input');
+    fileInput.type='file';
+    fileInput.accept='.json';
+    fileInput.onchange=e=>{
+        const file=e.target.files[0];
+        const reader=new FileReader();
+        reader.onload=ev=>{
+            users=JSON.parse(ev.target.result);
+            localStorage.setItem('users',JSON.stringify(users));
+            alert('Backup restored! Refresh page to login.');
+        };
+        reader.readAsText(file);
+    };
+    fileInput.click();
+}
 
 // Calculate & Update Dashboard
 function calculate(){
