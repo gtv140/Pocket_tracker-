@@ -39,6 +39,7 @@ td:hover{background:#f0f4f8;}
   <button onclick="addDay()">Add Day</button>
   <button onclick="calculate()">Recalculate</button>
   <button onclick="exportCSV()">Export CSV</button>
+  <button onclick="clearAll()">Clear All Data</button>
 </div>
 
 <h2>Monthly Overview</h2>
@@ -96,6 +97,15 @@ function addDay(){
     dailyData.push({food,fuel,snacks,bills,entertainment,total});
     localStorage.setItem('dailyData',JSON.stringify(dailyData));
     calculate();
+}
+
+// Clear all data
+function clearAll(){
+    if(confirm("Are you sure you want to delete all daily entries? This cannot be undone.")){
+        dailyData = [];
+        localStorage.removeItem('dailyData');
+        calculate();
+    }
 }
 
 // Main calculate
