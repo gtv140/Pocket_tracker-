@@ -1,22 +1,71 @@
-<monthly>
+<pocket tracker>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PocketTracker Simple</title>
+<title>Just Pocket Tracker</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body{font-family:Arial,sans-serif;margin:0;padding:0;background:#1e1e1e;color:#fff;}
-h2{text-align:center;margin:10px;}
-input,button{padding:8px;margin:5px;border-radius:5px;border:none;}
-button{cursor:pointer;}
-#dashboard, #licenseScreen{display:none;}
-table{width:90%;margin:10px auto;border-collapse:collapse;}
-th,td{border:1px solid #fff;padding:5px;text-align:center;}
+/* ===== Base ===== */
+body{font-family:'Arial',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#333;}
+h2{text-align:center;margin:10px;font-weight:700;}
+input,button{padding:8px;margin:5px;border-radius:8px;border:1px solid #ccc;}
+button{cursor:pointer;font-weight:700;}
+#dashboard,#licenseScreen{display:none;}
+
+/* ===== Header ===== */
+header{
+    background:linear-gradient(90deg,#4caf50,#2196f3);
+    padding:20px;
+    text-align:center;
+    color:#fff;
+    font-size:32px;
+    font-weight:bold;
+    letter-spacing:1px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* ===== Info Boxes ===== */
+.infoBox{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin:20px 0;
+}
+.infoBox div{
+    background:linear-gradient(135deg,#ff9800,#ff5722);
+    color:#fff;
+    margin:10px;
+    padding:20px;
+    border-radius:15px;
+    min-width:150px;
+    text-align:center;
+    box-shadow:0 6px 15px rgba(0,0,0,0.2);
+    font-weight:bold;
+    transition:0.3s;
+}
+.infoBox div:hover{transform:scale(1.05);}
+
+/* ===== Buttons ===== */
+button.addBtn{background:#4caf50;color:#fff;border:none;}
+button.clearBtn{background:#f44336;color:#fff;border:none;}
+
+/* ===== Table ===== */
+table{
+    width:90%;
+    margin:10px auto;
+    border-collapse:collapse;
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+th,td{border:1px solid #ccc;padding:8px;text-align:center;}
+th{background:#2196f3;color:#fff;}
+tr:nth-child(even){background:#f9f9f9;}
 </style>
 </head>
 <body>
 
-<h2>💼 PocketTracker Simple 💼</h2>
+<header>💼 Just Pocket Tracker 💼</header>
 <div id="datetime" style="text-align:center;margin-bottom:10px;"></div>
 
 <!-- Login/Register -->
@@ -26,7 +75,7 @@ th,td{border:1px solid #fff;padding:5px;text-align:center;}
     Password: <input type="password" id="loginPass"><br>
     <button onclick="login()">Login</button>
     <button onclick="register()">Register</button>
-    <p id="loginMsg" style="color:yellow;"></p>
+    <p id="loginMsg" style="color:#ff9800;"></p>
 </div>
 
 <!-- License -->
@@ -34,29 +83,36 @@ th,td{border:1px solid #fff;padding:5px;text-align:center;}
     <h2>Enter License Key</h2>
     <input type="text" id="licenseInput" placeholder="XXXX-XXXX"><br>
     <button onclick="checkLicense()">Unlock Dashboard</button>
-    <p id="licenseMsg" style="color:yellow;"></p>
+    <p id="licenseMsg" style="color:#ff9800;"></p>
 </div>
 
 <!-- Dashboard -->
 <div id="dashboard">
     <h2 id="welcomeUser"></h2>
-    <div style="text-align:center;">
+    <div style="text-align:center;margin-bottom:10px;">
         Salary: <input type="number" id="salaryInput" value="0" onchange="updateSalary()">
         Goal Saving: <input type="number" id="goalInput" value="10000" onchange="updateGoal()">
         Loan: <input type="number" id="loanInput" value="0" onchange="updateLoan()"><br>
         <button onclick="logout()">Logout</button>
     </div>
 
-    <h3>Dashboard Summary</h3>
-    <p>Total Expense: <span id="totalExpense">0</span> | Remaining: <span id="remaining">0</span> | Saving: <span id="currentSaving">0</span> | Goal %: <span id="goalStatus">0%</span></p>
+    <h3>💰 Dashboard Summary</h3>
+    <div class="infoBox">
+        <div>Total Expense<br><span id="totalExpense">0</span></div>
+        <div>Remaining Balance<br><span id="remaining">0</span></div>
+        <div>Current Saving<br><span id="currentSaving">0</span></div>
+        <div>Goal Achieved<br><span id="goalStatus">0%</span></div>
+    </div>
 
     <h3>Daily Expenses</h3>
-    <button onclick="addDaily('food')">Food</button>
-    <button onclick="addDaily('fuel')">Fuel</button>
-    <button onclick="addDaily('snacks')">Snacks</button>
-    <button onclick="addDaily('bills')">Bills</button>
-    <button onclick="addDaily('fun')">Fun</button>
-    <button onclick="clearAll()">Clear All</button>
+    <div style="text-align:center;">
+        <button class="addBtn" onclick="addDaily('food')">Food 🍔</button>
+        <button class="addBtn" onclick="addDaily('fuel')">Fuel ⛽</button>
+        <button class="addBtn" onclick="addDaily('snacks')">Snacks 🍿</button>
+        <button class="addBtn" onclick="addDaily('bills')">Bills 💡</button>
+        <button class="addBtn" onclick="addDaily('fun')">Fun 🎮</button>
+        <button class="clearBtn" onclick="clearAll()">Clear All 🗑️</button>
+    </div>
 
     <table id="dailyTable">
         <tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Fun</th><th>Total</th><th>Date</th></tr>
