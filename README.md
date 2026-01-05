@@ -1,46 +1,42 @@
-<Monthly>
+<monthly>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PocketTracker Final</title>
+<title>PocketTracker Icon Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg,#f0f4f8,#d9e2ec);
-  color: #333;
-  margin:0; padding:20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg,#e0f7fa,#80deea);
+    color:#333; margin:0; padding:20px;
 }
-h1,h2 {text-align:center;color:#1a1a1a;}
-#datetime{text-align:center;font-weight:bold;margin-bottom:20px;color:#555;}
-input, button {padding:8px;margin:5px;border:2px solid #4a90e2;border-radius:8px;outline:none;transition:0.3s;}
-input:focus {border-color:#357ABD; box-shadow:0 0 5px #357ABD;}
-button{padding:10px 20px;background:#4a90e2;color:#fff;border:none;border-radius:8px;cursor:pointer;}
-button:hover{background:#357ABD; transform:scale(1.05);}
+h1 {text-align:center; color:#00796b;}
+#datetime {text-align:center;font-weight:bold;margin-bottom:20px;color:#004d40;}
+.dashboard {display:flex;flex-wrap:wrap;justify-content:center;margin-bottom:20px;}
+.card {background:#fff;box-shadow:0 4px 8px rgba(0,0,0,0.1);border-radius:12px;margin:10px;padding:15px;text-align:center;width:120px;cursor:pointer;transition:0.3s;}
+.card:hover{transform:scale(1.05);box-shadow:0 6px 12px rgba(0,0,0,0.2);}
+.card span{display:block;font-size:24px;margin-bottom:5px;}
 table{border-collapse: collapse;width:100%;margin-top:20px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
 th,td{border:1px solid #e0e0e0;padding:8px;text-align:center;color:#333;}
-th{background:#f5f7fa;}
-td:hover{background:#f0f4f8;}
-.progress-bar {height:25px;background:#e0e0e0;border-radius:12px;overflow:hidden;margin:10px 0;}
-.progress {height:100%;background:#4a90e2;width:0%;color:#fff;text-align:center;line-height:25px;font-weight:bold;transition:0.5s;}
+th{background:#b2dfdb;}
+.progress-bar {height:25px;background:#c8e6c9;border-radius:12px;overflow:hidden;margin:10px 0;}
+.progress {height:100%;background:#00796b;width:0%;color:#fff;text-align:center;line-height:25px;font-weight:bold;transition:0.5s;}
 </style>
 </head>
 <body>
 
-<h1>🌟 PocketTracker Final 🌟</h1>
+<h1>🌟 PocketTracker Dashboard 🌟</h1>
 <div id="datetime"></div>
 
-<div style="text-align:center;">
-  <label>Salary: <input type="number" id="salary" value="49800"></label>
-  <label>Ghar Kharcha: <input type="number" id="house" value="20000"></label>
-  <label>Loan: <input type="number" id="loan" value="10000"></label>
-  <label>Savings Goal: <input type="number" id="goal" value="10000"></label>
-  <label>Loan Paid: <input type="checkbox" id="loanPaid" onchange="updateLoan()"></label>
-  <br>
-  <button onclick="addDay()">Add Day</button>
-  <button onclick="calculate()">Recalculate</button>
-  <button onclick="exportCSV()">Export CSV</button>
-  <button onclick="clearAll()">Clear All Data</button>
+<div class="dashboard">
+    <div class="card" title="Add Food" onclick="addDaily('food')"><span>🍔</span>Food</div>
+    <div class="card" title="Add Fuel" onclick="addDaily('fuel')"><span>⛽</span>Fuel</div>
+    <div class="card" title="Add Snacks" onclick="addDaily('snacks')"><span>🍿</span>Snacks</div>
+    <div class="card" title="Add Bills" onclick="addDaily('bills')"><span>💡</span>Bills</div>
+    <div class="card" title="Add Entertainment" onclick="addDaily('entertainment')"><span>🎮</span>Fun</div>
+    <div class="card" title="Loan Paid Toggle" onclick="toggleLoan()"><span id="loanIcon">💰</span>Loan</div>
+    <div class="card" title="Clear All Data" onclick="clearAll()"><span>🗑️</span>Clear</div>
+    <div class="card" title="Export CSV" onclick="exportCSV()"><span>📊</span>Export</div>
 </div>
 
 <h2>Monthly Overview</h2>
@@ -63,15 +59,6 @@ td:hover{background:#f0f4f8;}
 </tr>
 </table>
 
-<h2>Weekly Summary</h2>
-<table>
-<tr><th>Week</th><th>Expense</th><th>Saving</th></tr>
-<tr><td>Week 1</td><td id="w1Expense">0</td><td id="w1Saving">0</td></tr>
-<tr><td>Week 2</td><td id="w2Expense">0</td><td id="w2Saving">0</td></tr>
-<tr><td>Week 3</td><td id="w3Expense">0</td><td id="w3Saving">0</td></tr>
-<tr><td>Week 4</td><td id="w4Expense">0</td><td id="w4Saving">0</td></tr>
-</table>
-
 <h2>Visual Overview</h2>
 <canvas id="chart" width="400" height="200"></canvas>
 
@@ -85,65 +72,62 @@ function updateDateTime(){
 setInterval(updateDateTime,1000);
 updateDateTime();
 
-// Load from localStorage
+// Data
 let dailyData = [];
 let loanPaidAmount = 0;
+const salary = 49800;
+const house = 20000;
+const loanDefault = 10000;
+const goal = 10000;
+
 if(localStorage.getItem('dailyData')) dailyData = JSON.parse(localStorage.getItem('dailyData'));
 if(localStorage.getItem('loanPaid')) loanPaidAmount = parseInt(localStorage.getItem('loanPaid')) || 0;
-document.getElementById('loanPaid').checked = loanPaidAmount>0;
+updateLoanIcon();
 calculate();
 
-// Add new day manually
-function addDay(){
-    const food = parseInt(prompt("Food PKR:", "200")) || 0;
-    const fuel = parseInt(prompt("Fuel PKR:", "50")) || 0;
-    const snacks = parseInt(prompt("Snacks PKR:", "30")) || 0;
-    const bills = parseInt(prompt("Bills PKR:", "50")) || 0;
-    const entertainment = parseInt(prompt("Entertainment PKR:", "50")) || 0;
-    const total = food+fuel+snacks+bills+entertainment;
-    dailyData.push({food,fuel,snacks,bills,entertainment,total});
+// Add daily expense
+function addDaily(type){
+    const value = parseInt(prompt(`Enter ${type} amount in PKR:`,"0")) || 0;
+    if(dailyData.length===0) dailyData.push({food:0,fuel:0,snacks:0,bills:0,entertainment:0,total:0});
+    let today = dailyData[dailyData.length-1];
+    today[type] += value;
+    today.total = today.food+today.fuel+today.snacks+today.bills+today.entertainment;
     localStorage.setItem('dailyData',JSON.stringify(dailyData));
     calculate();
 }
 
-// Loan Paid toggle
-function updateLoan(){
-    let loan = parseInt(document.getElementById('loan').value);
-    if(document.getElementById('loanPaid').checked){
-        loanPaidAmount = loan;
+// Loan toggle
+function toggleLoan(){
+    if(loanPaidAmount===0){
+        loanPaidAmount=loanDefault;
     } else {
-        loanPaidAmount = 0;
+        loanPaidAmount=0;
     }
     localStorage.setItem('loanPaid',loanPaidAmount);
+    updateLoanIcon();
     calculate();
 }
+function updateLoanIcon(){
+    document.getElementById('loanIcon').innerText = loanPaidAmount>0 ? '✅' : '💰';
+}
 
-// Clear all data
+// Clear all
 function clearAll(){
-    if(confirm("Are you sure you want to delete all daily entries? This cannot be undone.")){
-        dailyData = [];
+    if(confirm("Delete all data?")){
+        dailyData=[];
+        loanPaidAmount=0;
         localStorage.removeItem('dailyData');
-        loanPaidAmount = 0;
         localStorage.removeItem('loanPaid');
-        document.getElementById('loanPaid').checked = false;
+        updateLoanIcon();
         calculate();
     }
 }
 
-// Main calculate
+// Calculate
 function calculate(){
-    let salary = parseInt(document.getElementById('salary').value);
-    let house = parseInt(document.getElementById('house').value);
-    let loan = parseInt(document.getElementById('loan').value);
-    let goal = parseInt(document.getElementById('goal').value);
-
-    // Update daily table
-    const table = document.getElementById('dailyTable');
-    table.innerHTML = "<tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Entertainment</th><th>Daily Total</th><th>Total incl. Ghar+Loan</th></tr>";
-    let totalExpense = 0;
-    const dailyHouseShare = house/dailyData.length || 0;
-    const dailyLoanShare = loanPaidAmount/dailyData.length || 0;
-
+    const table=document.getElementById('dailyTable');
+    table.innerHTML="<tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Entertainment</th><th>Daily Total</th><th>Total incl. Ghar+Loan</th></tr>";
+    let totalExpense = house + loanPaidAmount;
     dailyData.forEach((day,index)=>{
         const row = table.insertRow();
         row.insertCell(0).innerText = index+1;
@@ -153,35 +137,18 @@ function calculate(){
         row.insertCell(4).innerText = day.bills;
         row.insertCell(5).innerText = day.entertainment;
         row.insertCell(6).innerText = day.total;
-        const totalWithHouseLoan = day.total + Math.round(dailyHouseShare + dailyLoanShare);
-        row.insertCell(7).innerText = totalWithHouseLoan;
+        const totalWithLoan = day.total + Math.round(house/dailyData.length) + Math.round(loanPaidAmount/dailyData.length || 0);
+        row.insertCell(7).innerText = totalWithLoan;
         totalExpense += day.total;
     });
-
-    totalExpense += house + loanPaidAmount;
-
-    const remaining = salary-totalExpense;
+    const remaining = salary - totalExpense;
     document.getElementById('totalSalary').innerText = salary;
     document.getElementById('totalExpense').innerText = totalExpense;
     document.getElementById('remaining').innerText = remaining;
-
-    let goalPercent = Math.min(Math.round((remaining/goal)*100),100);
+    const goalPercent = Math.min(Math.round((remaining/goal)*100),100);
     document.getElementById('goalStatus').innerText = goalPercent+'%';
     document.getElementById('progress').style.width = goalPercent+'%';
     document.getElementById('progress').innerText = goalPercent+'%';
-
-    // Weekly summary
-    const weekCount = 4;
-    const weekLen = Math.ceil(dailyData.length/weekCount);
-    for(let i=1;i<=weekCount;i++){
-        const start=(i-1)*weekLen;
-        const end=i*weekLen;
-        let weekExpense = house/4 + loanPaidAmount/4;
-        dailyData.slice(start,end).forEach(d=>weekExpense+=d.total);
-        let weekSaving = salary/4 - weekExpense;
-        document.getElementById('w'+i+'Expense').innerText = Math.round(weekExpense);
-        document.getElementById('w'+i+'Saving').innerText = Math.round(weekSaving);
-    }
 
     // Chart
     const ctx=document.getElementById('chart').getContext('2d');
@@ -190,7 +157,7 @@ function calculate(){
         type:'bar',
         data:{
             labels:['Salary','Total Expense','Remaining Saving'],
-            datasets:[{label:'PKR',data:[salary,totalExpense,remaining],backgroundColor:['#4a90e2','#f39c12','#2ecc71'],borderColor:['#357ABD','#d35400','#27ae60'],borderWidth:2}]
+            datasets:[{label:'PKR',data:[salary,totalExpense,remaining],backgroundColor:['#00796b','#f39c12','#2ecc71'],borderColor:['#004d40','#d35400','#27ae60'],borderWidth:2}]
         },
         options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
     });
@@ -199,18 +166,14 @@ function calculate(){
 // Export CSV
 function exportCSV(){
     let csv='Day,Food,Fuel,Snacks,Bills,Entertainment,Daily Total,Total incl. Ghar+Loan\n';
-    const house = parseInt(document.getElementById('house').value);
-    const loan = loanPaidAmount;
-    const dailyHouseShare = house/dailyData.length || 0;
-    const dailyLoanShare = loan/dailyData.length || 0;
     dailyData.forEach((d,index)=>{
-        const totalWithHouseLoan = d.total + Math.round(dailyHouseShare + dailyLoanShare);
-        csv+=`${index+1},${d.food},${d.fuel},${d.snacks},${d.bills},${d.entertainment},${d.total},${totalWithHouseLoan}\n`;
+        const totalWithLoan = d.total + Math.round(house/dailyData.length) + Math.round(loanPaidAmount/dailyData.length || 0);
+        csv+=`${index+1},${d.food},${d.fuel},${d.snacks},${d.bills},${d.entertainment},${d.total},${totalWithLoan}\n`;
     });
-    let blob = new Blob([csv], {type:'text/csv'});
-    let link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'PocketTracker_Month.csv';
+    let blob=new Blob([csv],{type:'text/csv'});
+    let link=document.createElement('a');
+    link.href=URL.createObjectURL(blob);
+    link.download='PocketTracker_Month.csv';
     link.click();
 }
 </script>
