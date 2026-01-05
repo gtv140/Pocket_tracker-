@@ -2,58 +2,48 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PocketTracker Premium</title>
+<title>PocketTracker Final</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg,#f0f4f8,#d9e2ec);
-    color: #333;
-    margin:0; padding:20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg,#f0f4f8,#d9e2ec);
+  color: #333;
+  margin:0; padding:20px;
 }
 h1,h2 {text-align:center;color:#1a1a1a;}
-p.message{text-align:center;font-size:18px;margin-bottom:10px;color:#1a1a1a;}
 #datetime{text-align:center;font-weight:bold;margin-bottom:20px;color:#555;}
-input, select, textarea {
-    padding:8px;margin:5px;border:2px solid #4a90e2;border-radius:8px;outline:none;transition:0.3s;
-}
-input:focus, select:focus, textarea:focus {border-color:#357ABD; box-shadow:0 0 5px #357ABD;}
-button{
-    padding:12px 24px;margin:10px 0;background:#4a90e2;color:#fff;font-weight:bold;border:none;border-radius:8px;cursor:pointer;transition:0.3s;
-}
-button:hover{background:#357ABD;transform:scale(1.05);}
-table{
-    border-collapse: collapse;width:100%;margin-top:20px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-th,td{border:1px solid #e0e0e0;padding:12px;text-align:center;color:#333;}
-th{background:#f5f7fa;font-weight:bold;}
+input, button {padding:8px;margin:5px;border:2px solid #4a90e2;border-radius:8px;outline:none;transition:0.3s;}
+input:focus {border-color:#357ABD; box-shadow:0 0 5px #357ABD;}
+button{padding:10px 20px;background:#4a90e2;color:#fff;border:none;border-radius:8px;cursor:pointer;}
+button:hover{background:#357ABD; transform:scale(1.05);}
+table{border-collapse: collapse;width:100%;margin-top:20px;background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+th,td{border:1px solid #e0e0e0;padding:8px;text-align:center;color:#333;}
+th{background:#f5f7fa;}
 td:hover{background:#f0f4f8;}
-canvas{margin-top:20px;background:#fff;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
-label{display:inline-block;margin:5px;font-weight:bold;}
 .progress-bar {height:25px;background:#e0e0e0;border-radius:12px;overflow:hidden;margin:10px 0;}
 .progress {height:100%;background:#4a90e2;width:0%;color:#fff;text-align:center;line-height:25px;font-weight:bold;transition:0.5s;}
 </style>
 </head>
 <body>
 
-<h1>🌟 PocketTracker Premium Dashboard 🌟</h1>
-<p class="message">Track your salary, categories, saving goal, daily notes, and progress automatically!</p>
+<h1>🌟 PocketTracker Final 🌟</h1>
 <div id="datetime"></div>
 
 <div style="text-align:center;">
   <label>Salary: <input type="number" id="salary" value="49800"></label>
   <label>Ghar Kharcha: <input type="number" id="house" value="20000"></label>
   <label>Loan: <input type="number" id="loan" value="10000"></label>
-  <label>Daily Kharcha: <input type="number" id="daily" value="500"></label>
   <label>Savings Goal: <input type="number" id="goal" value="10000"></label>
   <br>
-  <button onclick="calculate()">Calculate & Save</button>
+  <button onclick="addDay()">Add Day</button>
+  <button onclick="calculate()">Recalculate</button>
   <button onclick="exportCSV()">Export CSV</button>
 </div>
 
 <h2>Monthly Overview</h2>
 <table>
-<tr><th>Total Salary</th><th>Total Kharcha</th><th>Remaining Saving</th><th>Goal Status</th></tr>
+<tr><th>Total Salary</th><th>Total Expense</th><th>Remaining Saving</th><th>Goal %</th></tr>
 <tr>
 <td id="totalSalary">0</td>
 <td id="totalExpense">0</td>
@@ -63,12 +53,14 @@ label{display:inline-block;margin:5px;font-weight:bold;}
 </table>
 <div class="progress-bar"><div id="progress" class="progress">0%</div></div>
 
-<h2>Daily Expenses & Notes</h2>
-<table id="dailyTable"><tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Entertainment</th><th>Total</th><th>Note</th></tr></table>
+<h2>Daily Expenses</h2>
+<table id="dailyTable">
+<tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Entertainment</th><th>Total</th></tr>
+</table>
 
 <h2>Weekly Summary</h2>
 <table>
-<tr><th>Week</th><th>Kharcha</th><th>Saving</th></tr>
+<tr><th>Week</th><th>Expense</th><th>Saving</th></tr>
 <tr><td>Week 1</td><td id="w1Expense">0</td><td id="w1Saving">0</td></tr>
 <tr><td>Week 2</td><td id="w2Expense">0</td><td id="w2Saving">0</td></tr>
 <tr><td>Week 3</td><td id="w3Expense">0</td><td id="w3Saving">0</td></tr>
@@ -89,72 +81,67 @@ setInterval(updateDateTime,1000);
 updateDateTime();
 
 // Load from localStorage
-window.onload = function(){
-    if(localStorage.getItem('pocketTrackerData')){
-        let data = JSON.parse(localStorage.getItem('pocketTrackerData'));
-        document.getElementById('salary').value=data.salary;
-        document.getElementById('house').value=data.house;
-        document.getElementById('loan').value=data.loan;
-        document.getElementById('daily').value=data.daily;
-        document.getElementById('goal').value=data.goal;
-        calculate();
-    }
+let dailyData = [];
+if(localStorage.getItem('dailyData')) dailyData = JSON.parse(localStorage.getItem('dailyData'));
+calculate();
+
+// Add new day manually
+function addDay(){
+    const food = parseInt(prompt("Food PKR:", "200")) || 0;
+    const fuel = parseInt(prompt("Fuel PKR:", "50")) || 0;
+    const snacks = parseInt(prompt("Snacks PKR:", "30")) || 0;
+    const bills = parseInt(prompt("Bills PKR:", "50")) || 0;
+    const entertainment = parseInt(prompt("Entertainment PKR:", "50")) || 0;
+    const total = food+fuel+snacks+bills+entertainment;
+    dailyData.push({food,fuel,snacks,bills,entertainment,total});
+    localStorage.setItem('dailyData',JSON.stringify(dailyData));
+    calculate();
 }
 
-// Main Calculation
+// Main calculate
 function calculate(){
-    let salary=parseInt(document.getElementById('salary').value);
-    let house=parseInt(document.getElementById('house').value);
-    let loan=parseInt(document.getElementById('loan').value);
-    let daily=parseInt(document.getElementById('daily').value);
-    let goal=parseInt(document.getElementById('goal').value);
+    let salary = parseInt(document.getElementById('salary').value);
+    let house = parseInt(document.getElementById('house').value);
+    let loan = parseInt(document.getElementById('loan').value);
+    let goal = parseInt(document.getElementById('goal').value);
 
-    const now=new Date();
-    const totalDays=new Date(now.getFullYear(), now.getMonth()+1,0).getDate();
+    // Update daily table
+    const table = document.getElementById('dailyTable');
+    table.innerHTML = "<tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Entertainment</th><th>Total</th></tr>";
+    let totalExpense = house+loan;
+    dailyData.forEach((day,index)=>{
+        const row = table.insertRow();
+        row.insertCell(0).innerText = index+1;
+        row.insertCell(1).innerText = day.food;
+        row.insertCell(2).innerText = day.fuel;
+        row.insertCell(3).innerText = day.snacks;
+        row.insertCell(4).innerText = day.bills;
+        row.insertCell(5).innerText = day.entertainment;
+        row.insertCell(6).innerText = day.total;
+        totalExpense += day.total;
+    });
 
-    // Category split
-    let food=Math.round(daily*0.4);
-    let fuel=Math.round(daily*0.2);
-    let snacks=Math.round(daily*0.1);
-    let bills=Math.round(daily*0.2);
-    let entertainment=Math.round(daily*0.1);
+    const remaining = salary-totalExpense;
+    document.getElementById('totalSalary').innerText = salary;
+    document.getElementById('totalExpense').innerText = totalExpense;
+    document.getElementById('remaining').innerText = remaining;
 
-    // Total expense
-    let totalExpense=house+loan+daily*totalDays;
-    let remaining=salary-totalExpense;
+    let goalPercent = Math.min(Math.round((remaining/goal)*100),100);
+    document.getElementById('goalStatus').innerText = goalPercent+'%';
+    document.getElementById('progress').style.width = goalPercent+'%';
+    document.getElementById('progress').innerText = goalPercent+'%';
 
-    document.getElementById('totalSalary').innerText=salary;
-    document.getElementById('totalExpense').innerText=totalExpense;
-    document.getElementById('remaining').innerText=remaining;
-
-    // Goal %
-    let goalPercent=Math.min(Math.round((remaining/goal)*100),100);
-    document.getElementById('goalStatus').innerText=goalPercent+'%';
-    document.getElementById('progress').style.width=goalPercent+'%';
-    document.getElementById('progress').innerText=goalPercent+'%';
-
-    // Daily Table
-    let dailyTable=document.getElementById('dailyTable');
-    dailyTable.innerHTML="<tr><th>Day</th><th>Food</th><th>Fuel</th><th>Snacks</th><th>Bills</th><th>Entertainment</th><th>Total</th><th>Note</th></tr>";
-    for(let i=1;i<=totalDays;i++){
-        let row=dailyTable.insertRow();
-        row.insertCell(0).innerText=i;
-        row.insertCell(1).innerText=food;
-        row.insertCell(2).innerText=fuel;
-        row.insertCell(3).innerText=snacks;
-        row.insertCell(4).innerText=bills;
-        row.insertCell(5).innerText=entertainment;
-        row.insertCell(6).innerText=food+fuel+snacks+bills+entertainment;
-        row.insertCell(7).innerHTML='<input type="text" placeholder="Note">';
-    }
-
-    // Weekly summary (split month into 4 approx weeks)
-    let weekDays=Math.ceil(totalDays/4);
-    for(let i=1;i<=4;i++){
-        let weekExpense=Math.round(daily*weekDays + house/4 + loan/4);
-        let weekSaving=Math.round(salary/4 - weekExpense);
-        document.getElementById('w'+i+'Expense').innerText=weekExpense;
-        document.getElementById('w'+i+'Saving').innerText=weekSaving;
+    // Weekly summary
+    const weekCount = 4;
+    const weekLen = Math.ceil(dailyData.length/weekCount);
+    for(let i=1;i<=weekCount;i++){
+        const start=(i-1)*weekLen;
+        const end=i*weekLen;
+        let weekExpense = house/4 + loan/4;
+        dailyData.slice(start,end).forEach(d=>weekExpense+=d.total);
+        let weekSaving = salary/4 - weekExpense;
+        document.getElementById('w'+i+'Expense').innerText = Math.round(weekExpense);
+        document.getElementById('w'+i+'Saving').innerText = Math.round(weekSaving);
     }
 
     // Chart
@@ -168,30 +155,20 @@ function calculate(){
         },
         options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
     });
-
-    // Save to localStorage
-    localStorage.setItem('pocketTrackerData',JSON.stringify({salary,house,loan,daily,goal}));
 }
 
 // Export CSV
 function exportCSV(){
     let csv='Day,Food,Fuel,Snacks,Bills,Entertainment,Total\n';
-    const rows=document.querySelectorAll('#dailyTable tr');
-    rows.forEach((row,index)=>{
-        if(index>0){
-            const cells=row.querySelectorAll('td');
-            let rowData=[];
-            cells.forEach(cell=>{rowData.push(cell.innerText);});
-            csv+=rowData.join(',')+'\n';
-        }
+    dailyData.forEach((d,index)=>{
+        csv+=`${index+1},${d.food},${d.fuel},${d.snacks},${d.bills},${d.entertainment},${d.total}\n`;
     });
-    let blob=new Blob([csv],{type:'text/csv'});
-    let link=document.createElement('a');
-    link.href=URL.createObjectURL(blob);
-    link.download='PocketTracker_Month.csv';
+    let blob = new Blob([csv], {type:'text/csv'});
+    let link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'PocketTracker_Month.csv';
     link.click();
 }
 </script>
-
 </body>
 </html>
