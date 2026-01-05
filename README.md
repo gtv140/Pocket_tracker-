@@ -4,59 +4,75 @@
 <meta charset="UTF-8">
 <title>PocketTracker Ultimate Premium</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* ===== Base Styles ===== */
 body{
-    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family:'Roboto',sans-serif;
     margin:0;padding:0;
-    background: linear-gradient(120deg,#1e3c72,#2a5298);
+    background: linear-gradient(135deg,#1e3c72,#2a5298);
     color:#fff;
+    overflow-x:hidden;
+    transition:0.5s;
 }
-h1,h2{text-align:center;margin:10px;}
-#datetime{text-align:center;font-weight:bold;margin-bottom:15px;color:#ffeb3b;}
-button{cursor:pointer;transition:0.3s;}
-button:hover{opacity:0.8;}
-input{padding:5px;border-radius:6px;border:2px solid #03a9f4;outline:none;margin:3px;}
-input:focus{border-color:#0288d1;box-shadow:0 0 5px #0288d1;}
+h1,h2{text-align:center;margin:10px;font-weight:700;}
+#datetime{text-align:center;font-weight:bold;margin-bottom:15px;color:#ffeb3b;letter-spacing:1px;font-size:18px;}
+button{cursor:pointer;transition:0.3s;font-weight:700;}
+button:hover{opacity:0.85;}
+input{padding:8px;border-radius:10px;border:2px solid #03a9f4;outline:none;margin:3px;width:120px;}
+input:focus{border-color:#0288d1;box-shadow:0 0 8px #0288d1;}
+
+/* ===== Header ===== */
+header{
+    background:linear-gradient(135deg,#29b6f6,#00acc1);
+    padding:15px;
+    text-align:center;
+    font-size:28px;
+    font-weight:bold;
+    color:#fff;
+    text-shadow:2px 2px 5px rgba(0,0,0,0.3);
+    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+    border-bottom-left-radius:15px;
+    border-bottom-right-radius:15px;
+}
 
 /* ===== Dashboard Styles ===== */
 .dashboard{display:flex;flex-wrap:wrap;justify-content:center;margin:20px 0;}
 .card{
-    background:linear-gradient(135deg,#29b6f6,#00acc1);
-    box-shadow:0 4px 12px rgba(0,0,0,0.25);
-    border-radius:12px;
+    background:linear-gradient(145deg,#00acc1,#29b6f6);
+    box-shadow:0 8px 20px rgba(0,0,0,0.35);
+    border-radius:15px;
     margin:10px;
-    padding:15px;
+    padding:20px;
     text-align:center;
-    width:120px;
+    width:130px;
     cursor:pointer;
-    transition:0.3s;
+    transition:0.4s;
     font-weight:bold;
 }
-.card:hover{transform:scale(1.05);box-shadow:0 6px 16px rgba(0,0,0,0.35);}
-.card span{display:block;font-size:30px;margin-bottom:5px;}
+.card:hover{transform:scale(1.08);box-shadow:0 10px 30px rgba(0,0,0,0.45);}
 
+/* ===== Info Boxes ===== */
 .infoBox{
     display:flex;
     flex-wrap:wrap;
     justify-content:space-around;
     margin:20px;
-    background:rgba(255,255,255,0.1);
     padding:15px;
-    border-radius:12px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.25);
 }
 .infoBox div{
     text-align:center;
-    background:linear-gradient(135deg,#00acc1,#29b6f6);
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(8px);
     color:#fff;
-    padding:15px;
-    margin:5px;
-    border-radius:12px;
+    padding:20px;
+    margin:10px;
+    border-radius:15px;
     flex:1;
-    min-width:140px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.25);
-    transition:0.3s;font-weight:bold;
+    min-width:150px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    transition:0.4s;
+    font-weight:bold;
 }
 .infoBox div:hover{transform:scale(1.05);}
 
@@ -65,22 +81,38 @@ table{
     border-collapse: collapse;
     width:100%;
     margin-top:20px;
-    background:#fff;
+    background:rgba(255,255,255,0.95);
     color:#333;
-    border-radius:8px;
+    border-radius:12px;
     overflow:hidden;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    box-shadow:0 6px 15px rgba(0,0,0,0.2);
 }
-th,td{border:1px solid #e0e0e0;padding:8px;text-align:center;}
-th{background:#0288d1;color:#fff;}
+th,td{border:1px solid #e0e0e0;padding:10px;text-align:center;}
+th{background:#0288d1;color:#fff;letter-spacing:1px;}
+tr:nth-child(even){background:rgba(0,172,193,0.1);}
+tr:hover{background:rgba(0,172,193,0.2);}
 
 /* ===== Theme Toggle ===== */
-#themeToggle{position:fixed;top:10px;right:10px;padding:6px 10px;background:#0288d1;color:#fff;border-radius:6px;}
+#themeToggle{position:fixed;top:15px;right:15px;padding:8px 12px;background:#0288d1;color:#fff;border-radius:8px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.3);}
+
+/* ===== Footer Floating Lights ===== */
+.floating{
+    position:absolute;
+    border-radius:50%;
+    opacity:0.3;
+    animation:float 10s infinite;
+    z-index:0;
+}
+@keyframes float{
+    0%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-50px) rotate(180deg);}
+    100%{transform:translateY(0) rotate(360deg);}
+}
 </style>
 </head>
 <body>
 
-<h1>💼 PocketTracker Ultimate Premium 💼</h1>
+<header>💼 PocketTracker Ultimate Premium 💼</header>
 <div id="datetime"></div>
 <button id="themeToggle" onclick="toggleTheme()">Toggle Theme</button>
 
@@ -103,7 +135,7 @@ th{background:#0288d1;color:#fff;}
 </div>
 
 <!-- Dashboard -->
-<div id="dashboard" style="display:none;">
+<div id="dashboard" style="display:none;position:relative;z-index:1;">
     <div style="text-align:right;margin-bottom:10px;">
         <span id="welcomeUser" style="font-weight:bold;font-size:18px;"></span>
         <button onclick="logout()">Logout</button>
@@ -147,6 +179,12 @@ th{background:#0288d1;color:#fff;}
     <canvas id="chart" width="400" height="200"></canvas>
 </div>
 
+<!-- Floating Background Lights -->
+<div class="floating" style="width:15px;height:15px;background:#ffeb3b;top:50px;left:30px;"></div>
+<div class="floating" style="width:12px;height:12px;background:#03a9f4;top:150px;left:120px;"></div>
+<div class="floating" style="width:18px;height:18px;background:#4caf50;top:300px;left:200px;"></div>
+<div class="floating" style="width:10px;height:10px;background:#ff5722;top:400px;left:50px;"></div>
+
 <script>
 // ===== Timer =====
 function updateDateTime(){
@@ -165,7 +203,7 @@ function toggleTheme(){
         document.body.style.color="#333";
         darkTheme=false;
     }else{
-        document.body.style.background="linear-gradient(120deg,#1e3c72,#2a5298)";
+        document.body.style.background="linear-gradient(135deg,#1e3c72,#2a5298)";
         document.body.style.color="#fff";
         darkTheme=true;
     }
@@ -345,22 +383,24 @@ function calculate(){
     // Chart
     const ctx=document.getElementById('chart').getContext('2d');
     if(window.barChart) window.barChart.destroy();
-    window.barChart=new Chart(ctx,{type:'bar',data:{labels:['Salary','Total Expense','Current Saving'],datasets:[{label:'PKR',data:[salary,totalExpense,currentSaving],backgroundColor:['#00acc1','#f39c12','#2ecc71'],borderColor:['#00796b','#d35400','#27ae60'],borderWidth:2}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+    window.barChart=new Chart(ctx,{type:'bar',data:{labels:['Salary','Total Expense','Current Saving'],datasets:[{label:'PKR',data:[salary,totalExpense,currentSaving],backgroundColor:['#00acc1','#f39c12','#4caf50']}],options:{responsive:true,plugins:{legend:{display:false},title:{display:true,text:'PocketTracker Overview'}}}});
 }
 
 // Export CSV
 function exportCSV(){
     let csv='Day,Food,Fuel,Snacks,Bills,Entertainment,Daily Total,Total incl. Loan,Date\n';
-    dailyData.forEach((d,index)=>{
-        const totalWithLoan=d.total + Math.round(loanAmount/dailyData.length||0);
-        csv+=`${index+1},${d.food},${d.fuel},${d.snacks},${d.bills},${d.entertainment},${d.total},${totalWithLoan},${d.date}\n`;
+    dailyData.forEach((d,i)=>{
+        csv+=`${i+1},${d.food},${d.fuel},${d.snacks},${d.bills},${d.entertainment},${d.total},${d.total + Math.round(loanAmount/dailyData.length||0)},${d.date}\n`;
     });
-    let blob=new Blob([csv],{type:'text/csv'});
-    let link=document.createElement('a');
+    const blob=new Blob([csv],{type:'text/csv'});
+    const link=document.createElement('a');
     link.href=URL.createObjectURL(blob);
-    link.download='PocketTracker_Pro.csv';
+    link.download='PocketTracker.csv';
     link.click();
 }
+
+// ===== End of Script =====
 </script>
+
 </body>
 </html>
